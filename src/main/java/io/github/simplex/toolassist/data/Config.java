@@ -8,6 +8,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,8 +87,10 @@ public class Config extends YamlConfiguration {
     public static class Settings {
         private final ConfigurationSection plugin_settings;
         private final ConfigurationSection tool_settings;
+        private final Config config;
 
         public Settings(Config config) {
+            this.config = config;
             this.plugin_settings = config.getConfigurationSection("plugin_settings");
             this.tool_settings = config.getConfigurationSection("tool_settings");
         }
@@ -147,6 +151,29 @@ public class Config extends YamlConfiguration {
                     .stream()
                     .map(Material::matchMaterial)
                     .collect(Collectors.toSet());
+        }
+
+        public final void modifyToolEntry(String name, String value, boolean addOrRemove) {
+            List<String> materialList = tool_settings.getStringList(name);
+
+            // This is to use a tertiary statement instead of an if-else.
+            // The respective method will be called and then the result will be set to the ignored boolean, which can be safely ignored.
+            boolean ignored = addOrRemove ? materialList.add(value) : materialList.remove(value);
+
+            tool_settings.set(name, materialList);
+            config.osave();
+        }
+
+        public final void removeToolEntry(String name, String value) {
+            List<String> materialList = tool_settings.getStringList(name);
+            materialList.remove(value);
+            tool_settings.set(name, materialList);
+            config.osave();
+        }
+
+        public final void setPluginEntry(String name, Object value) {
+            plugin_settings.set(name, value);
+            config.osave();
         }
     }
 }

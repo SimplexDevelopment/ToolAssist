@@ -1,5 +1,6 @@
-package io.github.simplex.toolassist;
+package io.github.simplex.toolassist.play;
 
+import io.github.simplex.toolassist.ToolAssist;
 import io.github.simplex.toolassist.data.BlockIdentifier;
 import io.github.simplex.toolassist.data.Config;
 import org.bukkit.block.Block;
