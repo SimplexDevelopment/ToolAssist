@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockIdentifier {
-    private final List<Block> blockList = new ArrayList<>();
     private final ToolAssist plugin;
     boolean isValid = false;
 
@@ -18,9 +17,9 @@ public class BlockIdentifier {
     }
 
     public List<Block> populateAndRetrieve(Block block, ItemStack requiredItem) {
+        List<Block> surroundingBlocks = new ArrayList<>();
         Location start = block.getLocation().clone();
         int radius = plugin.getConfig().getSettings().radius();
-        List<Block> surroundingBlocks = new ArrayList<>();
         for (double x = start.getX() - radius; x <= start.getX() + radius; x++) {
             for (double y = start.getY() - radius; y <= start.getY() + radius; y++) {
                 for (double z = start.getZ() - radius; z <= start.getZ() + radius; z++) {
@@ -31,9 +30,7 @@ public class BlockIdentifier {
                 }
             }
         }
-        blockList.addAll(surroundingBlocks);
-
-        return blockList;
+        return surroundingBlocks;
     }
 
     public boolean checkBlock(Block block, ItemStack targetItem) {

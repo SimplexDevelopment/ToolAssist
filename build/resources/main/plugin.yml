@@ -1,0 +1,6 @@
+name: ToolAssist
+version: 'v1.0-Alpha'
+main: io.github.simplex.toolassist.ToolAssist
+api-version: 1.18
+authors: [ SimplexDevelopment ]
+description: A lightweight vein-mining plugin.

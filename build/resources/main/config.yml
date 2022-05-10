@@ -1,0 +1,82 @@
+# The overall settings for the plugin itself
+plugin_settings:
+
+  # The permission required to use the assist feature.
+  permission: "toolassist.activate"
+
+  # How many blocks outwards should be scanned
+  search_radius: 15
+
+  # Whether a user must be sneaking to activate
+  sneak_activation: true
+
+  # Whether to use the respective tool to trigger activation, or to use the groupings listed below.
+  no_config: false
+
+# The block material that can be targeted by the respective tool grouping
+tool_settings:
+
+  # Blocks which are affected by pickaxes
+  pickaxe:
+    - COAL_ORE
+    - COPPER_ORE
+    - IRON_ORE
+    - GOLD_ORE
+    - REDSTONE_ORE
+    - LAPIS_LAZULI_ORE
+    - EMERALD_ORE
+    - DIAMOND_ORE
+    - DEEPSLATE_COAL_ORE
+    - DEEPSLATE_IRON_ORE
+    - DEEPSLATE_GOLD_ORE
+    - DEEPSLATE_REDSTONE_ORE
+    - DEEPSLATE_LAPIS_ORE
+    - DEEPSLATE_EMERALD_ORE
+    - DEEPSLATE_DIAMOND_ORE
+    - DEEPSLATE_COPPER_ORE
+    - NETHER_QUARTZ_ORE
+    - NETHER_GOLD_ORE
+
+  # Blocks which are affected by axes
+  axe:
+    - OAK_LOG
+    - DARK_OAK_LOG
+    - BIRCH_LOG
+    - SPRUCE_LOG
+    - JUNGLE_LOG
+    - ACACIA_LOG
+    - STRIPPED_OAK_LOG
+    - STRIPPED_DARK_OAK_LOG
+    - STRIPPED_BIRCH_LOG
+    - STRIPPED_SPRUCE_LOG
+    - STRIPPED_JUNGLE_LOG
+    - STRIPPED_ACACIA_LOG
+
+  # Blocks which are affected by shovels
+  shovel:
+    - SAND
+    - GRAVEL
+
+  # Blocks which are affected by hoes
+  hoe:
+    - WARPED_WART_BLOCK
+    - NETHER_WART_BLOCK
+    - SPONGE
+    - WET_SPONGE
+
+  # Blocks which are affected by swords
+  sword:
+    - COBWEB
+
+  # Blocks which are affected by shears
+  shears:
+    - OAK_LEAVES
+    - DARK_OAK_LEAVES
+    - BIRCH_LEAVES
+    - JUNGLE_LEAVES
+    - ACACIA_LEAVES
+    - SPRUCE_LEAVES
+    - VINE
+    - CAVE_VINES_PLANT
+    - WEEPING_VINES_PLANT
+    - TWISTING_VINES_PLANT
