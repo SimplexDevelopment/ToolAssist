@@ -1,14 +1,17 @@
 # The overall settings for the plugin itself
 plugin_settings:
 
+  # The permission required to use the assist feature.
+  permission: "toolassist.activate"
+
   # How many blocks outwards should be scanned
   search_radius: 15
 
   # Whether a user must be sneaking to activate
   sneak_activation: true
 
-  # Whether to use Tag<Material> to get the appropriate materials, or to use the groupings listed below.
-  use_tags_no_config: false
+  # Whether to use the respective tool to trigger activation, or to use the groupings listed below.
+  no_config: false
 
 # The block material that can be targeted by the respective tool grouping
 tool_settings:

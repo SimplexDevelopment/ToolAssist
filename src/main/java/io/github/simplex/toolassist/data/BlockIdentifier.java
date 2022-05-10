@@ -2,46 +2,76 @@ package io.github.simplex.toolassist.data;
 
 import io.github.simplex.toolassist.ToolAssist;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BlockIdentifier {
     private final List<Block> blockList = new ArrayList<>();
-    private final List<Location> blockLocations = new ArrayList<>();
     private final ToolAssist plugin;
+    boolean isValid = false;
 
     public BlockIdentifier(ToolAssist plugin) {
         this.plugin = plugin;
     }
 
-    public List<Block> populateAndRetrieve(Block block) {
+    public List<Block> populateAndRetrieve(Block block, ItemStack requiredItem) {
         Location start = block.getLocation().clone();
-
+        int radius = plugin.getConfig().getSettings().radius();
+        List<Block> surroundingBlocks = new ArrayList<>();
+        for (double x = start.getX() - radius; x <= start.getX() + radius; x++) {
+            for (double y = start.getY() - radius; y <= start.getY() + radius; y++) {
+                for (double z = start.getZ() - radius; z <= start.getZ() + radius; z++) {
+                    Location location = new Location(start.getWorld(), x, y, z);
+                    if (checkBlock(location.getBlock(), requiredItem)) {
+                        surroundingBlocks.add(location.getBlock());
+                    }
+                }
+            }
+        }
+        blockList.addAll(surroundingBlocks);
 
         return blockList;
     }
 
     public boolean checkBlock(Block block, ItemStack targetItem) {
-        AtomicBoolean isValid = new AtomicBoolean(false);
-
-        if (plugin.getConfig().getSettings().useTags()) {
-            TagBox.oreTagList().forEach(tag -> {
-                if (tag.isTagged(block.getType())) isValid.set(true);
-            });
-            return isValid.get();
+        if (plugin.getConfig().getSettings().noConfig()) {
+            return block.isValidTool(targetItem);
         }
 
-        Material m = block.getType();
-        Material item = targetItem.getType();
+        checkBlockConfig(block, targetItem);
+        return isValid;
+    }
 
-        // TODO: Tag or Material checks for the item, then the respective block type.
-
-        return isValid.get();
+    private void checkBlockConfig(Block block, ItemStack targetItem) {
+        String itemName = targetItem.getType().name();
+        Config.Settings settings = plugin.getConfig().getSettings();
+        if (itemName.endsWith("pickaxe")) {
+            if (settings.pickaxeMaterials().contains(block.getType())) isValid = true;
+            return;
+        }
+        if (!itemName.endsWith("pickaxe") && itemName.endsWith("axe")) {
+            if (settings.axeMaterials().contains(block.getType())) isValid = true;
+            return;
+        }
+        if (itemName.endsWith("shears")) {
+            if (settings.shearMaterials().contains(block.getType())) isValid = true;
+            return;
+        }
+        if (itemName.endsWith("shovel")) {
+            if (settings.shovelMaterials().contains(block.getType())) isValid = true;
+            return;
+        }
+        if (itemName.endsWith("hoe")) {
+            if (settings.hoeMaterials().contains(block.getType())) isValid = true;
+            return;
+        }
+        if (itemName.endsWith("sword")) {
+            if (settings.swordMaterials().contains(block.getType())) isValid = true;
+            return;
+        }
+        isValid = false;
     }
 }

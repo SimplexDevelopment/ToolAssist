@@ -8,11 +8,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Config extends YamlConfiguration {
 
     private final Settings settings;
+    private final File cf;
 
     public Config(ToolAssist plugin) {
         this.settings = new Settings(this);
@@ -23,7 +27,7 @@ public class Config extends YamlConfiguration {
 
         if (!dataFolder.exists()) dataFolder.mkdirs();
 
-        File cf = new File(dataFolder, fileName);
+        cf = new File(dataFolder, fileName);
 
         InputStream stream = plugin.getResource(fileName);
         assert stream != null;
@@ -34,7 +38,7 @@ public class Config extends YamlConfiguration {
                 plugin.saveResource(fileName, true);
             }
 
-            oload(cf);
+            oload();
 
             reader.lines().filter(s -> s.contains(":"))
                     .map(s -> s.split(":")[0])
@@ -42,11 +46,12 @@ public class Config extends YamlConfiguration {
                     .forEach(s -> {
                         plugin.getLogger().severe("Configuration is missing an entry, attempting to replace...");
                         Optional<String> stringStream = reader.lines().filter(c -> c.contains(s)).findFirst();
-                        assert stringStream.isPresent();
+                        if (stringStream.isEmpty())
+                            throw new RuntimeException("Unable to fix your configuration file. Please delete the config.yml in the data folder and restart your server.");
                         String key = stringStream.get().split(":")[0].trim();
                         String value = stringStream.get().split(":")[1].trim();
                         super.addDefault(key, value);
-                        osave(cf);
+                        osave();
                     });
 
 
@@ -54,10 +59,10 @@ public class Config extends YamlConfiguration {
             plugin.getLogger().severe(ex.getMessage());
         }
 
-        oload(cf);
+        oload();
     }
 
-    public void osave(File cf) {
+    public void osave() {
         try {
             super.save(cf);
         } catch (IOException e) {
@@ -65,7 +70,7 @@ public class Config extends YamlConfiguration {
         }
     }
 
-    public void oload(File cf) {
+    public void oload() {
         try {
             super.load(cf);
         } catch (IOException | InvalidConfigurationException e) {
@@ -86,8 +91,12 @@ public class Config extends YamlConfiguration {
             this.tool_settings = config.getConfigurationSection("tool_settings");
         }
 
-        public final boolean useTags() {
-            return plugin_settings.getBoolean("use_tags_no_config", false);
+        public final String permission() {
+            return plugin_settings.getString("permission", "toolassist.activate");
+        }
+
+        public final boolean noConfig() {
+            return plugin_settings.getBoolean("no_config", false);
         }
 
         public final boolean useSneak() {
@@ -99,57 +108,45 @@ public class Config extends YamlConfiguration {
         }
 
         public final Set<Material> pickaxeMaterials() {
-            Set<Material> materials = new HashSet<>();
-            tool_settings.getStringList("pickaxe")
+            return tool_settings.getStringList("pickaxe")
                     .stream()
                     .map(Material::matchMaterial)
-                    .forEach(materials::add);
-            return materials;
+                    .collect(Collectors.toSet());
         }
 
         public final Set<Material> axeMaterials() {
-            Set<Material> materials = new HashSet<>();
-            tool_settings.getStringList("axe")
+            return tool_settings.getStringList("axe")
                     .stream()
                     .map(Material::matchMaterial)
-                    .forEach(materials::add);
-            return materials;
+                    .collect(Collectors.toSet());
         }
 
         public final Set<Material> shovelMaterials() {
-            Set<Material> materials = new HashSet<>();
-            tool_settings.getStringList("shovel")
+            return tool_settings.getStringList("shovel")
                     .stream()
                     .map(Material::matchMaterial)
-                    .forEach(materials::add);
-            return materials;
+                    .collect(Collectors.toSet());
         }
 
         public final Set<Material> hoeMaterials() {
-            Set<Material> materials = new HashSet<>();
-            tool_settings.getStringList("hoe")
+            return tool_settings.getStringList("hoe")
                     .stream()
                     .map(Material::matchMaterial)
-                    .forEach(materials::add);
-            return materials;
+                    .collect(Collectors.toSet());
         }
 
         public final Set<Material> swordMaterials() {
-            Set<Material> materials = new HashSet<>();
-            tool_settings.getStringList("sword")
+            return tool_settings.getStringList("sword")
                     .stream()
                     .map(Material::matchMaterial)
-                    .forEach(materials::add);
-            return materials;
+                    .collect(Collectors.toSet());
         }
 
         public final Set<Material> shearMaterials() {
-            Set<Material> materials = new HashSet<>();
-            tool_settings.getStringList("shears")
+            return tool_settings.getStringList("shears")
                     .stream()
                     .map(Material::matchMaterial)
-                    .forEach(materials::add);
-            return materials;
+                    .collect(Collectors.toSet());
         }
     }
 }

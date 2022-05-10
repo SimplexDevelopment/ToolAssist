@@ -11,12 +11,18 @@ public final class ToolAssist extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        getLogger().info("Initializing configuration...");
         this.config = new Config(this);
+        getLogger().info("Initialization complete! Registering listener...");
+        new MineListener(this);
+        getLogger().info("Initialization complete!");
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        this.config.osave();
+        this.config = null;
+        getLogger().info("Goodbye!");
     }
 
     @Override
