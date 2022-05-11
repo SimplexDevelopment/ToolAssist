@@ -7,12 +7,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class Command_toolassist extends Command implements PluginIdentifiableCommand {
+public class Command_toolassist extends Command implements PluginIdentifiableCommand, TabCompleter {
     private final ToolAssist plugin;
 
     public Command_toolassist(ToolAssist plugin) {
@@ -56,7 +60,7 @@ public class Command_toolassist extends Command implements PluginIdentifiableCom
             }
         }
 
-        if (args[0].equalsIgnoreCase("tool")) {
+        if (args[0].equalsIgnoreCase("tools")) {
             if (args.length != 4) return false;
 
             if (args[1].equalsIgnoreCase("add")) {
@@ -92,5 +96,43 @@ public class Command_toolassist extends Command implements PluginIdentifiableCom
     @Override
     public @NotNull ToolAssist getPlugin() {
         return plugin;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        List<String> completions = new ArrayList<>();
+
+        switch (args.length) {
+            case 1 -> {
+                completions = List.of("tools", "plugin");
+            }
+            case 2 -> {
+                if (args[0].equalsIgnoreCase("tools")) {
+                    completions = List.of("add", "remove");
+                }
+                if (args[0].equalsIgnoreCase("plugin")) {
+                    completions = List.of("permission", "radius", "sneak", "use_config");
+                }
+            }
+            case 3 -> {
+                if (args[0].equalsIgnoreCase("tools")) {
+                    if (args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("remove")) {
+                        completions = Stream.of("pickaxe", "axe", "sword", "shears", "shovel", "hoe").sorted().toList();
+                    }
+                }
+
+                if (args[0].equalsIgnoreCase("plugin")) {
+                    if (args[1].equalsIgnoreCase("use_config") || args[1].equalsIgnoreCase("sneak")) {
+                        completions = List.of("true", "false");
+                    }
+                }
+            }
+        }
+
+        return completions.stream().filter(p -> p.startsWith(args[args.length - 1])).toList();
+    }
+
+    public void unregister() {
+        unregister(plugin.getServer().getCommandMap());
     }
 }

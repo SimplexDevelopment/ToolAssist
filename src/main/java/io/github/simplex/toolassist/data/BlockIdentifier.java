@@ -2,6 +2,8 @@ package io.github.simplex.toolassist.data;
 
 import io.github.simplex.toolassist.ToolAssist;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,7 +37,7 @@ public class BlockIdentifier {
 
     public boolean checkBlock(Block block, ItemStack targetItem) {
         if (plugin.getConfig().getSettings().noConfig()) {
-            return block.isValidTool(targetItem);
+            return block.isValidTool(targetItem) && all.stream().anyMatch(a -> a.isTagged(block.getType()));
         }
 
         checkBlockConfig(block, targetItem);
@@ -71,4 +73,20 @@ public class BlockIdentifier {
         }
         isValid = false;
     }
+
+    public List<Tag<Material>> all = List.of(Tag.COAL_ORES,
+            Tag.COPPER_ORES,
+            Tag.GOLD_ORES,
+            Tag.IRON_ORES,
+            Tag.DIAMOND_ORES,
+            Tag.LAPIS_ORES,
+            Tag.EMERALD_ORES,
+            Tag.REDSTONE_ORES,
+            Tag.SAND,
+            Tag.CAVE_VINES,
+            Tag.WART_BLOCKS,
+            Tag.LOGS,
+            Tag.LOGS_THAT_BURN,
+            Tag.LEAVES,
+            Tag.WARPED_STEMS);
 }

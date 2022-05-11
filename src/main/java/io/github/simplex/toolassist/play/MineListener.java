@@ -25,14 +25,14 @@ public class MineListener implements Listener {
     @EventHandler
     public void activate(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        ItemStack stack = player.getInventory().getItemInMainHand();
-        Block block = event.getBlock();
         String permission = settings.permission();
-        List<Block> blocks = identifier.populateAndRetrieve(block, stack);
 
         if (!player.hasPermission(permission)) return;
-
         if (!player.isSneaking() && settings.useSneak()) return;
+
+        ItemStack stack = player.getInventory().getItemInMainHand();
+        Block block = event.getBlock();
+        List<Block> blocks = identifier.populateAndRetrieve(block, stack);
 
         blocks.forEach(Block::breakNaturally);
     }

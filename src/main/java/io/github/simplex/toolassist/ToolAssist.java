@@ -9,24 +9,29 @@ import org.jetbrains.annotations.NotNull;
 public final class ToolAssist extends JavaPlugin {
 
     private Config config;
+    private Command_toolassist command;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("Initializing configuration...");
-        this.config = new Config(this);
+        config = new Config(this);
         getLogger().info("Configuration loaded! Registering listener...");
         new MineListener(this);
         getLogger().info("Listener registered successfully! Loading command...");
-        new Command_toolassist(this);
+        command = new Command_toolassist(this);
         getLogger().info("Initialization complete!");
     }
 
     @Override
     public void onDisable() {
-        this.config.osave();
-        this.config = null;
-        getLogger().info("Goodbye!");
+        getLogger().info("Saving configuration...");
+        config.osave();
+        config = null;
+        getLogger().info("Configuration saved successfully. Unregistering the command...");
+        command.unregister();
+        command = null;
+        getLogger().info("Termination complete. Goodbye!");
     }
 
     @Override
