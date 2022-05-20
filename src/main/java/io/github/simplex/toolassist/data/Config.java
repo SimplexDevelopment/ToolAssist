@@ -6,11 +6,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,45 +20,17 @@ public class Config extends YamlConfiguration {
 
     public Config(ToolAssist plugin) {
         this.settings = new Settings(this);
-
         String fileName = "config.yml";
-
         File dataFolder = plugin.getDataFolder();
-
         if (!dataFolder.exists()) dataFolder.mkdirs();
-
         cf = new File(dataFolder, fileName);
-
-        InputStream stream = plugin.getResource(fileName);
-        assert stream != null;
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-            if (!cf.exists()) {
-                cf.createNewFile();
+        try {
+            if (cf.createNewFile()) {
                 plugin.saveResource(fileName, true);
             }
-
-            oload();
-
-            reader.lines().filter(s -> s.contains(":"))
-                    .map(s -> s.split(":")[0])
-                    .filter(s -> !super.getValues(true).containsKey(s))
-                    .forEach(s -> {
-                        plugin.getLogger().severe("Configuration is missing an entry, attempting to replace...");
-                        Optional<String> stringStream = reader.lines().filter(c -> c.contains(s)).findFirst();
-                        if (stringStream.isEmpty())
-                            throw new RuntimeException("Unable to fix your configuration file. Please delete the config.yml in the data folder and restart your server.");
-                        String key = stringStream.get().split(":")[0].trim();
-                        String value = stringStream.get().split(":")[1].trim();
-                        super.addDefault(key, value);
-                        osave();
-                    });
-
-
         } catch (IOException ex) {
             plugin.getLogger().severe(ex.getMessage());
         }
-
         oload();
     }
 
